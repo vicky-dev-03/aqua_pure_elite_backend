@@ -96,6 +96,24 @@ app.post("/attendance/add", async (req, res) => {
   }
 });
 
+app.get("/attendance", async (req, res) => {
+  try {
+    const { date } = req.query;
+    if (!date) return res.status(400).json({ error: "Date is required" });
+
+    const attendance = await Attendance.find({ date });
+
+    const result = attendance.map((item) => ({
+      employeeId: item.employeeId,
+      status: item.status,
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 app.get("/Invoice_list", async (req, res) => {
   try {
     const InvoiceList = await InvoiceData.find();
