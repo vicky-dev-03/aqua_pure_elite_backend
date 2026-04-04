@@ -9,6 +9,7 @@ import InvoiceData from "./schema/InvoiceData.js";
 import Payslip from "./schema/PaySlip.js";
 import productData from "./schema/ProductData.js";
 import Attendance from "./schema/Attendance.js";
+import OrdersList from "./schema/OrdersList.js";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -93,6 +94,32 @@ app.post("/attendance/add", async (req, res) => {
     res.status(200).json({ message: "Attendance saved/updated" });
   } catch (error) {
     res.status(500).json({ error });
+  }
+});
+
+app.post("/Create_Orders", async (req, res) => {
+  try {
+    const OrdersData = new OrdersList(req.body);
+    await OrdersData.save();
+    res.status(201).json({
+      message: "Order Created Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Error saving product data",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/Orders_data/list", async (req, res) => {
+  try {
+    const OrderData_list = await OrdersList.find();
+    res.send(OrderData_list);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching Orders Data" });
   }
 });
 
