@@ -123,6 +123,29 @@ app.get("/Orders_data/list", async (req, res) => {
   }
 });
 
+app.put("/Order_Update/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedOrder = await OrdersList.findByIdAndUpdate(id, updateData, {
+      returnDocument: "after",
+    });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json({
+      message: "Order updated successfully",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error updating order" });
+  }
+});
+
 app.get("/attendance", async (req, res) => {
   try {
     const { date } = req.query;
