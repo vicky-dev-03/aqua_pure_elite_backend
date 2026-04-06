@@ -10,6 +10,7 @@ import Payslip from "./schema/PaySlip.js";
 import productData from "./schema/ProductData.js";
 import Attendance from "./schema/Attendance.js";
 import OrdersList from "./schema/OrdersList.js";
+import Stock from "./schema/Stock.js";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -228,6 +229,24 @@ app.get("/Members_Details", async (req, res) => {
     res.status(500).json({ message: "Error fetching employees Data" });
   }
 });
+
+app.post('/api/stock/update', async (req, res) => {
+  try {
+    let { name, value } = req.body
+
+    name = name.toLowerCase()
+
+    await Stock.findOneAndUpdate(
+      { name: name },
+      { value: value },
+      { upsert: true, new: true }
+    )
+
+    res.json({ message: 'Stock saved/updated' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
 
 app.put("/Product_Data/:id", async (req, res) => {
   try {
