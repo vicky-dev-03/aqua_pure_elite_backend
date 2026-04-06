@@ -230,23 +230,32 @@ app.get("/Members_Details", async (req, res) => {
   }
 });
 
-app.post('/api/stock/update', async (req, res) => {
+app.post("/api/stock/update", async (req, res) => {
   try {
-    let { name, value } = req.body
+    let { name, value } = req.body;
 
-    name = name.toLowerCase()
+    name = name.toLowerCase();
 
     await Stock.findOneAndUpdate(
       { name: name },
       { value: value },
-      { upsert: true, new: true }
-    )
+      { upsert: true, new: true },
+    );
 
-    res.json({ message: 'Stock saved/updated' })
+    res.json({ message: "Stock saved/updated" });
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
+
+app.get("/Stock_remaining_value", async (req, res) => {
+  try {
+    const StockRemainingData = await Stock.find();
+    res.send(StockRemainingData);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 app.put("/Product_Data/:id", async (req, res) => {
   try {
