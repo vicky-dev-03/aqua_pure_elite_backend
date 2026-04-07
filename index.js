@@ -77,28 +77,37 @@ app.post("/attendance/add", async (req, res) => {
   try {
     const data = req.body;
 
-    const operations = data.map((item) => ({
-      updateOne: {
-        filter: {
-          employeeId: item.employeeId,
-          date: item.date,
-        },
-        update: {
-          $set: {
-            status: item.status,
-            inTime: item.inTime,
-            outTime: item.outTime,
+    const operations = data.map((item) => {
+      const updateFields = {};
+
+      updateFields.status = item.status;
+
+      if (item.inTime && item.inTime !== "") {
+        updateFields.inTime = item.inTime;
+      }
+
+      if (item.outTime && item.outTime !== "") {
+        updateFields.outTime = item.outTime;
+      }
+
+      return {
+        updateOne: {
+          filter: {
+            employeeId: item.employeeId,
+            date: item.date,
           },
+          update: { $set: updateFields },
+          upsert: true,
         },
-        upsert: true,
-      },
-    }));
+      };
+    });
 
     await Attendance.bulkWrite(operations);
 
-    res.status(200).json({ message: "Attendance saved/updated" });
+    res.status(200).json({ message: "Attendance updated successfully" });
   } catch (error) {
-    res.status(500).json({ error });
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -161,8 +170,8 @@ app.get("/attendance", async (req, res) => {
     const result = attendance.map((item) => ({
       employeeId: item.employeeId,
       status: item.status,
-      inTime: item.inTime, 
-      outTime: item.outTime, 
+      inTime: item.inTime,
+      outTime: item.outTime,
     }));
 
     res.status(200).json(result);
