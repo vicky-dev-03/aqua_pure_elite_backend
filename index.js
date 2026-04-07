@@ -84,7 +84,11 @@ app.post("/attendance/add", async (req, res) => {
           date: item.date,
         },
         update: {
-          $set: { status: item.status },
+          $set: {
+            status: item.status,
+            inTime: item.inTime,
+            outTime: item.outTime,
+          },
         },
         upsert: true,
       },
@@ -157,6 +161,8 @@ app.get("/attendance", async (req, res) => {
     const result = attendance.map((item) => ({
       employeeId: item.employeeId,
       status: item.status,
+      inTime: item.inTime, 
+      outTime: item.outTime, 
     }));
 
     res.status(200).json(result);
