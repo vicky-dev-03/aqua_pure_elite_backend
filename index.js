@@ -321,6 +321,15 @@ app.delete("/Member_delete/:id", async (req, res) => {
   }
 });
 
+app.delete("/api/Product/Data/:id", async (req, res) => {
+  try {
+    await productData.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Delete failed" });
+  }
+});
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
